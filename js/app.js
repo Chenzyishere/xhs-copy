@@ -113,12 +113,12 @@
         escapeHtml(slot.series) +
         "</p></div><h3>" +
         escapeHtml(slot.title) +
-        "</h3>" +
+        '</h3><div class="card-body">' +
         block("封面", slot.cover) +
         block("正文", slot.body) +
         block("标签", slot.tags) +
         block("首评", slot.comment) +
-        '<div class="actions"></div>';
+        '</div><div class="actions"></div>';
 
       const actions = article.querySelector(".actions");
       [
