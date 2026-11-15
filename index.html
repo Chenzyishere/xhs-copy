@@ -12,9 +12,21 @@
       <header class="hero">
         <div class="hero-copy">
           <p class="kicker">虾说说 · 人格图鉴</p>
-          <h1>软文素材台</h1>
-          <p class="lede">点月历选日期。有稿的日子复制发帖；还没写的日子会显示敬请期待。软文不挂商品，硬广才挂个人售卖。</p>
-          <p class="meta" id="meta"></p>
+          <div class="hero-title">
+            <h1>软文素材台</h1>
+            <p class="meta" id="meta"></p>
+          </div>
+          <div class="ops-projects" id="projects"></div>
+          <div class="ops-split">
+            <article class="lane you">
+              <h2>你要干 <span>Mark</span></h2>
+              <ol id="you-list"></ol>
+            </article>
+            <article class="lane me">
+              <h2>我要干 <span>Cursor</span></h2>
+              <ol id="me-list"></ol>
+            </article>
+          </div>
         </div>
         <div class="hero-tools">
           <p class="filters" id="filters"></p>
@@ -31,11 +43,17 @@
       <nav class="cal" id="days"></nav>
     </div>
     <main id="board"></main>
+    <footer class="ops-foot">
+      <p class="ops-later"><strong>先别做</strong> <span id="later"></span></p>
+      <div class="rules" id="rules"></div>
+    </footer>
   </div>
   <div class="toast" id="toast" hidden>已复制</div>
   <script src="js/data.js"></script>
   <script src="js/data-winter.js"></script>
   <script src="js/lunar.js"></script>
+  <script src="js/board-data.js"></script>
+  <script src="js/board.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
