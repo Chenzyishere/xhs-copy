@@ -32,6 +32,18 @@ h1 {
 }
 .lede { font-size: 16px; }
 .meta { margin-top: 10px; color: var(--muted); font-size: 13px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.filter-btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.filter-btn.is-on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.filter-btn.ghost { color: var(--muted); }
 
 .days {
   display: flex;
@@ -61,6 +73,12 @@ h1 {
   cursor: pointer;
 }
 .day-btn.is-on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.day-btn.is-part { box-shadow: inset 0 -2px 0 var(--you); }
+.day-btn.is-done { opacity: 0.45; }
+.day-btn.is-revise { box-shadow: inset 0 -2px 0 var(--me); }
+.day-btn.is-on.is-done,
+.day-btn.is-on.is-part,
+.day-btn.is-on.is-revise { opacity: 1; box-shadow: none; }
 
 .day-head {
   display: flex;
@@ -103,7 +121,22 @@ h1 {
 .kind-soft { color: var(--you); }
 .kind-ad { color: var(--me); }
 .card h3 { font-size: 16px; margin-bottom: 4px; line-height: 1.35; }
+.card.is-posted { background: rgba(31, 77, 58, 0.06); }
+.card.is-revise { background: rgba(122, 59, 18, 0.08); }
 .persona { color: var(--muted); font-size: 12px; text-align: right; }
+.marks { display: flex; gap: 6px; margin: 8px 0 4px; }
+.mark-btn {
+  font: inherit;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.mark-btn.is-on.mark-todo { border-color: var(--ink); color: var(--ink); }
+.mark-btn.is-on.mark-posted { border-color: var(--you); color: var(--you); background: rgba(31, 77, 58, 0.08); }
+.mark-btn.is-on.mark-revise { border-color: var(--me); color: var(--me); background: rgba(122, 59, 18, 0.08); }
 
 .block { margin: 10px 0; }
 .block-label {

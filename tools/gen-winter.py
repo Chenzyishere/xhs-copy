@@ -3,48 +3,9 @@
 from datetime import date, timedelta
 from pathlib import Path
 
+from hard_winter import HARD
+
 WD = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
-
-HIST_TAGS = "#性格测试 #人格测试 #趣味测试 #内耗 #测测你是哪种 #我的日常 #生活方式"
-HAT_TAGS = "#性格测试 #人格测试 #分院帽 #趣味测试 #人格 #我的日常 #生活方式"
-HIST_BODY = """你有没有发现，越觉得自己「想得开」的人，越不敢看结果。
-
-我做完这 16 道题，沉默了半分钟。
-不是不准，是太像了。
-
-大约 3 分钟。
-仅供娱乐，但报出来的人，一般不会装。
-
-评论区告诉我你测出谁。
-不敢报的，多半测中了。"""
-HAT_BODY = """你有没有发现，越急着给自己贴标签的人，越不敢做这 16 道题。
-
-我做完，沉默了一下。
-不是因为像，是因为没法装。
-
-大约 3 分钟。
-仅供娱乐。
-勇气、野心、理性、忠诚，你更靠近哪一块，题目比自我介绍老实。
-
-评论区报你的学院。
-报不出口的，多半测中了。"""
-
-HIST_TITLES = [
-    "做完才敢承认，原来我是这种人格",
-    "16 道题，我看完结果沉默了",
-    "测之前觉得自己通透，测完不敢发",
-    "你这种性格，早就有人替你走完一生",
-    "越想得开，越不敢看结果",
-    "3 分钟，看清自己更靠近哪一种",
-]
-HAT_TITLES = [
-    "分院帽看了 16 道题，没让我装",
-    "四个词，比自我介绍准",
-    "我以为自己是勇气，结果不是",
-    "敢在评论区报学院的，进来",
-    "测前定过院，测完不是那一院",
-    "自我介绍很好写，题目很老实",
-]
 
 SOFT = [
 ("苏轼", "反内耗型", "苏轼替我把风雨走成了路", "苏轼替我",
@@ -1158,20 +1119,6 @@ SOFT = [
 
 assert len(SOFT) == 80, len(SOFT)
 
-HIST_NY = """一年要收尾的时候，人最想看清自己靠近哪一种。
-
-16 道题。大约 3 分钟。
-仅供娱乐。
-做完再看那个名字，很多人会沉默一下。
-
-评论区告诉我你测出谁。"""
-
-HAT_NY = """跨年前给自己分一次院，不是迷信。
-是看勇气、野心、理性、忠诚，哪一块更像你。
-
-16 道题。大约 3 分钟。仅供娱乐。
-评论区报学院。报不出口的，多半测中了。"""
-
 
 def js_str(s):
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
@@ -1196,54 +1143,19 @@ def emit():
     d = date(2026, 11, 22)
     end = date(2026, 12, 31)
     i = 0
-    hist_i = 0
-    hat_i = 0
+    missing = []
+    cursor = d
+    while cursor <= end:
+        if cursor.isoformat() not in HARD:
+            missing.append(cursor.isoformat())
+        cursor += timedelta(days=1)
+    assert not missing, missing
     while d <= end:
         s1 = SOFT[i]
         s2 = SOFT[i + 1]
         i += 2
         wd = WD[d.weekday()]
-        is_hat = d.weekday() in (0, 2, 4)  # Mon Wed Fri
-        if d == date(2026, 12, 31):
-            h = (
-                "历史人物测试 · 挂个人售卖",
-                "跨年这一次，看看你更靠近谁",
-                "主标：跨年看看你更靠近谁\\n高亮：更靠近谁\\n极简卡通",
-                HIST_NY,
-                HIST_TAGS,
-                "跨年报一个名字也行。仅供娱乐。",
-            )
-        elif d == date(2026, 12, 12):
-            h = (
-                "历史人物测试 · 挂个人售卖",
-                "年底了，更想看清自己是哪种",
-                "主标：年底看清自己是哪种\\n高亮：看清自己\\n极简卡通",
-                "不是促销话术。\n是一年快过完，16 道题帮你看见自己更靠近谁。\n\n大约 3 分钟。仅供娱乐。\n评论区告诉我你测出谁。",
-                HIST_TAGS,
-                "年底报类型也行。不敢报的，多半测中了。",
-            )
-        elif is_hat:
-            title = HAT_TITLES[hat_i % len(HAT_TITLES)]
-            hat_i += 1
-            h = (
-                "分院帽测试 · 挂个人售卖",
-                title,
-                "主标：" + title[:12] + "\\n高亮：没让我装\\n极简卡通",
-                HAT_NY if d == date(2026, 12, 25) else HAT_BODY,
-                HAT_TAGS,
-                "报学院即可。问入口回上面挂了商品。",
-            )
-        else:
-            title = HIST_TITLES[hist_i % len(HIST_TITLES)]
-            hist_i += 1
-            h = (
-                "历史人物测试 · 挂个人售卖",
-                title,
-                "主标：" + title[:14] + "\\n高亮：才敢承认\\n极简卡通",
-                HIST_BODY,
-                HIST_TAGS,
-                "只报类型也行。问入口回上面挂了商品。",
-            )
+        h = HARD[d.isoformat()]
 
         def soft_call(tup, num):
             figure, persona, title, hl, body, tags, comment = tup
@@ -1253,10 +1165,8 @@ def emit():
                 js_str(series), js_str(title), cover, js_str(body), js_str(tags), js_str(comment),
             )
 
-        hcall = 'H("%s", "%s", "%s", "%s", "%s", "%s")' % tuple(js_str(x) if isinstance(x, str) else x for x in h)
-        # h already escaped some \\n in cover - handle
-        hcall = "H(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")" % (
-            js_str(h[0]), js_str(h[1]), h[2], js_str(h[3]), js_str(h[4]), js_str(h[5]),
+        hcall = "H(\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")" % tuple(
+            js_str(x) for x in h
         )
 
         lines.append(
