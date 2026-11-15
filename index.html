@@ -10,17 +10,21 @@
   <div class="page">
     <div class="mast">
       <header class="hero">
-        <p class="kicker">虾说说 · 人格图鉴</p>
-        <h1>软文素材台</h1>
-        <p class="lede">点月历选日期。有稿的日子复制发帖；还没写的日子会显示敬请期待。软文不挂商品，硬广才挂个人售卖。</p>
-        <p class="meta" id="meta"></p>
-        <p class="filters" id="filters"></p>
-        <div class="sync" id="sync" hidden>
-          <p>在 GitHub 给仓库 <code>Chenzyishere/xhs-copy</code> 开一枚 fine-grained PAT，权限只要 Contents 读写。贴在下面，只存在这台设备。</p>
-          <input id="sync-token" type="password" autocomplete="off" placeholder="github_pat_…">
-          <div class="sync-actions">
-            <button type="button" id="sync-save">保存并同步</button>
-            <button type="button" class="ghost" id="sync-clear">清除 token</button>
+        <div class="hero-copy">
+          <p class="kicker">虾说说 · 人格图鉴</p>
+          <h1>软文素材台</h1>
+          <p class="lede">点月历选日期。有稿的日子复制发帖；还没写的日子会显示敬请期待。软文不挂商品，硬广才挂个人售卖。</p>
+          <p class="meta" id="meta"></p>
+        </div>
+        <div class="hero-tools">
+          <p class="filters" id="filters"></p>
+          <div class="sync" id="sync" hidden>
+            <p>在 GitHub 给仓库 <code>Chenzyishere/xhs-copy</code> 开一枚 fine-grained PAT，权限只要 Contents 读写。贴在下面，只存在这台设备。</p>
+            <input id="sync-token" type="password" autocomplete="off" placeholder="github_pat_…">
+            <div class="sync-actions">
+              <button type="button" id="sync-save">保存并同步</button>
+              <button type="button" class="ghost" id="sync-clear">清除 token</button>
+            </div>
           </div>
         </div>
       </header>
