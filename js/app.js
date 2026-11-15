@@ -7,8 +7,13 @@
   };
 
   const params = new URLSearchParams(location.search);
-  const today = "2026-11-15";
-  let current = params.get("date") || today;
+  function todayIso() {
+    const d = new Date();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+  let current = params.get("date") || todayIso();
   if (!set.daysData.some(function (d) { return d.date === current; })) {
     current = set.daysData[0].date;
   }
@@ -17,17 +22,35 @@
     set.note + " · 共 " + set.daysData.length + " 天 · " + (set.daysData.length * 3) + " 条";
 
   const daysNav = $("days");
+  const months = [];
   set.daysData.forEach(function (day) {
-    const btn = document.createElement("button");
-    btn.className = "day-btn" + (day.date === current ? " is-on" : "");
-    btn.type = "button";
-    btn.textContent = day.date.slice(5).replace("-", "/") + " " + day.weekday;
-    btn.addEventListener("click", function () {
-      current = day.date;
-      history.replaceState(null, "", "?date=" + day.date);
-      render();
+    const key = day.date.slice(0, 7);
+    if (!months.length || months[months.length - 1].key !== key) {
+      months.push({ key: key, days: [] });
+    }
+    months[months.length - 1].days.push(day);
+  });
+  months.forEach(function (month) {
+    const row = document.createElement("div");
+    row.className = "month-row";
+    const lab = document.createElement("span");
+    lab.className = "month-label";
+    lab.textContent = Number(month.key.slice(5)) + "月";
+    row.appendChild(lab);
+    month.days.forEach(function (day) {
+      const btn = document.createElement("button");
+      btn.className = "day-btn" + (day.date === current ? " is-on" : "");
+      btn.type = "button";
+      btn.dataset.date = day.date;
+      btn.textContent = day.date.slice(8) + " " + day.weekday.slice(-1);
+      btn.addEventListener("click", function () {
+        current = day.date;
+        history.replaceState(null, "", "?date=" + day.date);
+        render();
+      });
+      row.appendChild(btn);
     });
-    daysNav.appendChild(btn);
+    daysNav.appendChild(row);
   });
 
   function fullText(slot) {
@@ -87,8 +110,8 @@
   }
 
   function render() {
-    Array.prototype.forEach.call(daysNav.children, function (btn, i) {
-      btn.classList.toggle("is-on", set.daysData[i].date === current);
+    Array.prototype.forEach.call(daysNav.querySelectorAll(".day-btn"), function (btn) {
+      btn.classList.toggle("is-on", btn.dataset.date === current);
     });
 
     const day = set.daysData.filter(function (d) {
