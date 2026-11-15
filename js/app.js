@@ -210,6 +210,18 @@
     return WD[new Date(p.y, p.m - 1, p.d).getDay()];
   }
 
+  function weekLong(iso) {
+    const p = parseIso(iso);
+    if (!p) return "";
+    return "星期" + "日一二三四五六".charAt(new Date(p.y, p.m - 1, p.d).getDay());
+  }
+
+  function lunarOf(iso) {
+    const p = parseIso(iso);
+    if (!p || !window.LUNAR) return null;
+    return window.LUNAR.of(p.y, p.m, p.d);
+  }
+
   function todayIso() {
     const d = new Date();
     return isoFrom(d.getFullYear(), d.getMonth() + 1, d.getDate());
@@ -444,12 +456,30 @@
 
   function paintDays() {
     daysNav.innerHTML = "";
+    const selected = parseIso(current);
+    const lunarNow = lunarOf(current);
+    const top = document.createElement("div");
+    top.className = "cal-top";
+    top.innerHTML =
+      '<p class="cal-now">' +
+      escapeHtml(selected.m + "月" + selected.d + "日, " + weekLong(current)) +
+      '</p><p class="cal-now-lunar">' +
+      escapeHtml(lunarNow ? lunarNow.head : "") +
+      "</p>";
+    daysNav.appendChild(top);
+
     const head = document.createElement("div");
     head.className = "cal-head";
+    const label = document.createElement("p");
+    label.className = "cal-title";
+    label.textContent = viewYear + "年" + viewMonth + "月";
+    const navs = document.createElement("div");
+    navs.className = "cal-navs";
     const prev = document.createElement("button");
     prev.type = "button";
     prev.className = "cal-nav";
-    prev.textContent = "上月";
+    prev.setAttribute("aria-label", "上月");
+    prev.textContent = "▲";
     prev.addEventListener("click", function () {
       viewMonth -= 1;
       if (viewMonth < 1) {
@@ -458,13 +488,11 @@
       }
       render();
     });
-    const label = document.createElement("p");
-    label.className = "cal-title";
-    label.textContent = viewYear + " 年 " + viewMonth + " 月";
     const next = document.createElement("button");
     next.type = "button";
     next.className = "cal-nav";
-    next.textContent = "下月";
+    next.setAttribute("aria-label", "下月");
+    next.textContent = "▼";
     next.addEventListener("click", function () {
       viewMonth += 1;
       if (viewMonth > 12) {
@@ -473,9 +501,10 @@
       }
       render();
     });
-    head.appendChild(prev);
+    navs.appendChild(prev);
+    navs.appendChild(next);
     head.appendChild(label);
-    head.appendChild(next);
+    head.appendChild(navs);
     daysNav.appendChild(head);
 
     const week = document.createElement("div");
@@ -494,21 +523,29 @@
       btn.type = "button";
       btn.className = cellClass(cell);
       btn.dataset.date = cell.iso;
+      const wrap = document.createElement("span");
+      wrap.className = "cal-n-wrap";
       const num = document.createElement("span");
       num.className = "cal-n";
       num.textContent = String(cell.n);
-      btn.appendChild(num);
+      wrap.appendChild(num);
+      btn.appendChild(wrap);
+      const lunar = lunarOf(cell.iso);
+      const sub = document.createElement("span");
+      sub.className = "cal-lunar";
+      sub.textContent = lunar ? lunar.cell : "";
+      btn.appendChild(sub);
       const day = dayByDate(cell.iso);
+      const dots = document.createElement("span");
+      dots.className = "cal-dots";
       if (day) {
-        const dots = document.createElement("span");
-        dots.className = "cal-dots";
         day.slots.forEach(function (slot) {
           const i = document.createElement("i");
           i.className = getStatus(day.date, slot.time);
           dots.appendChild(i);
         });
-        btn.appendChild(dots);
       }
+      btn.appendChild(dots);
       btn.addEventListener("click", function () {
         current = cell.iso;
         const p = parseIso(cell.iso);
